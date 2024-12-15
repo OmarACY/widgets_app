@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:widgets_app/config/router/app_router.dart';
 
 class SlideInfo {
   final String title;
@@ -22,12 +24,12 @@ final slides = <SlideInfo>[
   const SlideInfo(
     title: 'Pantalla 2',
     caption: 'Et consequat adipisicing nisi quis aute mollit esse aliqua amet.',
-    imageUrl: 'assets/images/1.png',
+    imageUrl: 'assets/images/2.png',
   ),
   const SlideInfo(
     title: 'Pantalla 3',
     caption: 'Cupidatat fugiat ullamco exercitation quis incididunt laboris dolor cupidatat.',
-    imageUrl: 'assets/images/1.png',
+    imageUrl: 'assets/images/3.png',
   ),
 ];
 
@@ -41,9 +43,19 @@ class AppTutorialScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        physics: const BouncingScrollPhysics(),
-        children: slides.map((slide) => _Slide(slide.title, slide.caption, slide.imageUrl)).toList(),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          PageView(
+            physics: const BouncingScrollPhysics(),
+            children: slides.map((slide) => _Slide(slide.title, slide.caption, slide.imageUrl)).toList(),
+          ),
+          Positioned(
+            top: 40, 
+            right: 20, 
+            child: TextButton(onPressed: () => context.pop(),
+            child: const Text('Salir'))),
+        ],
       ),
     );
   }
@@ -59,6 +71,24 @@ class _Slide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+
+    final titleStyle = Theme.of(context).textTheme.titleLarge;
+    final captionStyle = Theme.of(context).textTheme.bodySmall;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30.0), 
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image(image: AssetImage(imageUrl)),
+            const SizedBox(height: 20),
+            Text(title, style: titleStyle),
+            const SizedBox(height: 10),
+            Text(caption, style: captionStyle),
+          ],
+        ),
+    ));
   }
 }
