@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:animate_do/animate_do.dart';
 
 class InfiniteScrollScreen extends StatefulWidget {
   static const String name = 'infinite_scroll_screen';
@@ -50,6 +51,7 @@ class _InfiniteScrollScreenState extends State<InfiniteScrollScreen> {
     if( !isMounted ) return;
 
     setState(() {});
+    
   }
 
   void addFiveImages() {
@@ -87,7 +89,11 @@ class _InfiniteScrollScreenState extends State<InfiniteScrollScreen> {
         //Navigator.pop(context);
         context.pop();
       },
-        child: const Icon(Icons.arrow_back),
+        child: isLoading ? SpinPerfect(
+          infinite: true,
+          child: const Icon(Icons.refresh_rounded))
+          : FadeIn(child: const Icon(Icons.arrow_back_ios_new_rounded)),
+
       ),
     );
   }
