@@ -12,9 +12,7 @@ class InfiniteScrollScreen extends StatefulWidget {
 }
 
 class _InfiniteScrollScreenState extends State<InfiniteScrollScreen> {
-
-
-  List<int> imagesIds = [1,2,3,4,5,6,7,8,9,10];
+  List<int> imagesIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   final ScrollController scrollController = ScrollController();
   bool isLoading = false;
@@ -23,7 +21,8 @@ class _InfiniteScrollScreenState extends State<InfiniteScrollScreen> {
   @override
   void initState() {
     scrollController.addListener(() {
-      if ((scrollController.position.pixels + 500) >= scrollController.position.maxScrollExtent) {
+      if ((scrollController.position.pixels + 500) >=
+          scrollController.position.maxScrollExtent) {
         loadNextPage();
       }
     });
@@ -38,25 +37,41 @@ class _InfiniteScrollScreenState extends State<InfiniteScrollScreen> {
   }
 
   Future loadNextPage() async {
-
     if (isLoading) return;
     isLoading = true;
     setState(() {});
 
     await Future.delayed(const Duration(seconds: 2));
-    
+
     addFiveImages();
     isLoading = false;
 
-    if( !isMounted ) return;
+    if (!isMounted) return;
 
     setState(() {});
-    
+  }
+
+  Future<void> onRefresh() async {
+    if (isLoading) return;
+    isLoading = true;
+    setState(() {});
+
+    await Future.delayed(const Duration(seconds: 2));
+    if (!isMounted) return;
+
+    final lastImageId = imagesIds.last;
+    imagesIds.clear();
+    imagesIds.add(lastImageId + 1);
+    addFiveImages();
+
+    isLoading = false;
+
+    setState(() {});
   }
 
   void addFiveImages() {
     final lastImageId = imagesIds.last;
-    imagesIds.addAll([1,2,3,4,5].map((i) => lastImageId + i));
+    imagesIds.addAll([1, 2, 3, 4, 5].map((i) => lastImageId + i));
 //    for (var i = 1; i <= 5; i++) {
 //      imagesIds.add(lastImageId + i);
 //    }
@@ -70,30 +85,36 @@ class _InfiniteScrollScreenState extends State<InfiniteScrollScreen> {
         context: context,
         removeTop: true,
         removeBottom: true,
-        child: ListView.builder(
-          // If we remove item count we have an infinite list
-          itemCount: imagesIds.length,
-          controller: scrollController,
-          itemBuilder: (context, index) {
-          return FadeInImage(
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 300,
-            placeholder: const AssetImage('assets/images/jar-loading.gif'),
-            image: NetworkImage('https://picsum.photos/500/300/?image=$index'),
-          );
-        }),
+        child: RefreshIndicator(
+          onRefresh: onRefresh,
+          edgeOffset: 10,
+          strokeWidth: 2,
+          child: ListView.builder(
+              // If we remove item count we have an infinite list
+              itemCount: imagesIds.length,
+              controller: scrollController,
+              itemBuilder: (context, index) {
+                return FadeInImage(
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 300,
+                  placeholder:
+                      const AssetImage('assets/images/jar-loading.gif'),
+                  image:
+                      NetworkImage('https://picsum.photos/500/300/?image=${imagesIds[index]}'),
+                );
+              }),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-        //Navigator.pop(context);
-        context.pop();
-      },
-        child: isLoading ? SpinPerfect(
-          infinite: true,
-          child: const Icon(Icons.refresh_rounded))
-          : FadeIn(child: const Icon(Icons.arrow_back_ios_new_rounded)),
-
+          //Navigator.pop(context);
+          context.pop();
+        },
+        child: isLoading
+            ? SpinPerfect(
+                infinite: true, child: const Icon(Icons.refresh_rounded))
+            : FadeIn(child: const Icon(Icons.arrow_back_ios_new_rounded)),
       ),
     );
   }
