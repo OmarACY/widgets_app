@@ -10,6 +10,7 @@ class MenuItem {
 }
 
 const appMenuItems = <MenuItem>[
+  MenuItem('Counter Riverpod', 'Contador Riverpod', '/counter',Icons.add_circle_outline_rounded),
   MenuItem('Botones', 'Varios botones en Flutter', '/buttons',Icons.smart_button_outlined),
   MenuItem('Tarjetas', 'Un contenedor estilizado', '/cards', Icons.credit_card),
   MenuItem('Progress Indicators', 'Generales y controlados', '/progress', Icons.refresh_rounded),
