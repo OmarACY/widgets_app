@@ -1,25 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:widgets_app/presentation/Providers/counter_provider.dart';
+import 'package:widgets_app/presentation/Providers/theme_provider.dart';
 
-class CounterScreen extends StatelessWidget {
+class CounterScreen extends ConsumerWidget {
 
   static const String name = 'counter_screen';
 
   const CounterScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final int clickCounter = ref.watch(counterProvider);
+    final bool isDarkMode = ref.watch(isDarkModeProvider);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Counter Screen')),
+      appBar: AppBar(title: const Text('Counter Screen'),
+      actions: [
+        IconButton(
+          icon: Icon( isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined),
+          onPressed: (){
+            //ref.read(isDarkModeProvider.notifier).state = isDarkMode ? false : true;
+            ref.read(isDarkModeProvider.notifier).update((state) => !state);
+          }),
+      ],),
       body:  Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('You have pushed the button this many times:'),
-            Text('0', style: Theme.of(context).textTheme.titleLarge),
+            Text('$clickCounter', style: Theme.of(context).textTheme.titleLarge),
           ],
         ),
       ),
-      floatingActionButton: const FloatingActionButton(onPressed: null, child: Icon(Icons.add)),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        ref.read(counterProvider.notifier).state++;
+        //ref.read(counterProvider.notifier).update((state) => state + 1);
+      }, child: const Icon(Icons.add)),
     );
   }
 }
