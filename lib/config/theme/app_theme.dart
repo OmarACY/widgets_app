@@ -24,4 +24,11 @@ class AppTheme {
         colorSchemeSeed: colorThemes[selectedColor],
         appBarTheme: const AppBarTheme(centerTitle: true));
   }
+
+  AppTheme copyWith({int? selectedColor, bool? isDarkMode}) {
+    return AppTheme(
+      selectedColor: selectedColor ?? this.selectedColor,
+      isDarkMode: isDarkMode ?? this.isDarkMode,
+    );
+  }
 }
